@@ -1,45 +1,47 @@
-🛠️ Supreme Screen Locker (Prank & Educational Simulation)
+### 🛠️ Supreme Screen Locker (Prank & Educational Simulation)
 
 A lightweight, full-screen hacker-themed desktop simulation script written in Python. Utilizing Tkinter for GUI rendering and Windows API low-level hooks (ctypes), this tool simulates a dramatic cybersecurity breach UI equipped with automated typewriter terminal logs, fake exfiltration progress bars, simulated wipe animations, and shortcut suppression.
 
-    ⚠️ DISCLAIMER: This project is strictly intended for educational purposes and benign pranks among consenting parties. It does NOT contain malicious code, encrypt files, modify system registries, or destroy data.
-📌 Features
+### ⚠️ DISCLAIMER: This project is strictly intended for educational purposes and benign pranks among consenting parties. It does NOT contain malicious code, encrypt files, modify system registries, or destroy data.
 
-    🖥️ Full-Screen Immersive UI: Overrides desktop focus with a borderless, top-most black terminal interface.
+### 📌 Features
 
-    ⌨️ Keyboard Navigation Intercept: Demonstrates low-level Windows API hooks (SetWindowsHookExW) to capture and suppress system hotkeys like Alt+Tab, Alt+F4, and the Windows Key.
+---🖥️ Full-Screen Immersive UI: Overrides desktop focus with a borderless, top-most black terminal interface.
 
-    ⚡ Animated Cyber Visuals:
+---⌨️ Keyboard Navigation Intercept: Demonstrates low-level Windows API hooks (SetWindowsHookExW) to capture and suppress system hotkeys like Alt+Tab, Alt+F4, and the Windows Key.
 
-        Simulated HUD scanner overlay and subtle matrix rain streams.
+### ⚡ Animated Cyber Visuals:
 
-        Real-time typewriter output printing simulated penetration testing terminal logs.
+---Simulated HUD scanner overlay and subtle matrix rain streams.
 
-        Fake data breach progress indicator and automated system wipe sequence.
+---Real-time typewriter output printing simulated penetration testing terminal logs.
 
-    🖼️ Optional Image Branding: Automatically scales and overlays a custom image (hacker.png) if Pillow (PIL) is present.
+---Fake data breach progress indicator and automated system wipe sequence.
 
-    🚨 Safe Emergency Exit: Pressing ESC immediately unhooks system hooks and closes the application cleanly without making any system changes.
+---🖼️ Optional Image Branding: Automatically scales and overlays a custom image (hacker.png) if Pillow (PIL) is present.
+
+---🚨 Safe Emergency Exit: Pressing ESC immediately unhooks system hooks and closes the application cleanly without making any system changes.
     
-    📁 Repository Structure
-    .
+### 📁 Repository Structure
+----------------------------------------------------------------------------------
 ├── main.py            # Main application source code
 ├── hacker.png         # (Optional) Image overlay file placed in the same folder
 ├── requirements.txt   # Dependency file
 └── README.md          # Project documentation
+----------------------------------------------------------------------------------
 
-⚙️️ How It Works (Technical Overview)
+### ⚙️️ How It Works (Technical Overview)
 
-    ### 1.Low-Level Keyboard Hooking:
-    The script registers a low-level keyboard hook using ctypes.windll.user32.SetWindowsHookExW with WH_KEYBOARD_LL. This intercepts keystrokes before they reach standard OS handlers, preventing users from casually minimizing the window via system shortcuts (Alt+Tab, Win Key, etc.).
+### 1.Low-Level Keyboard Hooking:
+The script registers a low-level keyboard hook using ctypes.windll.user32.SetWindowsHookExW with WH_KEYBOARD_LL. This intercepts keystrokes before they reach standard OS handlers, preventing users from casually minimizing the window via system shortcuts (Alt+Tab, Win Key, etc.).
 
-    ### 2.Tkinter Canvas Animations:
-    The GUI utilizes tkinter.Canvas with scheduled callback loops (root.after()) to handle fluid animations (HUD scanner line, matrix streams, and typewriter log simulation).
+### 2.Tkinter Canvas Animations:
+The GUI utilizes tkinter.Canvas with scheduled callback loops (root.after()) to handle fluid animations (HUD scanner line, matrix streams, and typewriter log simulation).
 
-    ### 3.Graceful Teardown:
-    When the ESC key is pressed or the simulation finishes its timer sequence, UnhookWindowsHookEx is explicitly called to release system resources and restore normal keyboard navigation immediately.
+### 3.Graceful Teardown:
+When the ESC key is pressed or the simulation finishes its timer sequence, UnhookWindowsHookEx is explicitly called to release system resources and restore normal keyboard navigation immediately.
 
-🚀 Getting Started
+### 🚀 Getting Started
 Prerequisites
 
 --Operating System: Microsoft Windows (10/11 recommended).
