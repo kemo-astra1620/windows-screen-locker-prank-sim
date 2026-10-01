@@ -24,10 +24,10 @@ A lightweight, full-screen hacker-themed desktop simulation script written in Py
     
 ### 📁 Repository Structure
 ----------------------------------------------------------------------------------
-├── main.py            # Main application source code
-├── hacker.png         # (Optional) Image overlay file placed in the same folder
-├── requirements.txt   # Dependency file
-└── README.md          # Project documentation
+├── main.py           Main application source code
+├── hacker.png        (Optional) Image overlay file placed in the same folder
+├── requirements.txt  Dependency file
+└── README.md         Project documentation
 ----------------------------------------------------------------------------------
 
 ### ⚙️️ How It Works (Technical Overview)
@@ -42,13 +42,10 @@ The GUI utilizes tkinter.Canvas with scheduled callback loops (root.after()) to 
 When the ESC key is pressed or the simulation finishes its timer sequence, UnhookWindowsHookEx is explicitly called to release system resources and restore normal keyboard navigation immediately.
 
 ### 🚀 Getting Started
-Prerequisites
 
 --Operating System: Microsoft Windows (10/11 recommended).
 
 --Python Version: Python 3.8 or higher.
-
-Installation & Execution
 
 ### 1.Clone the Repository:
 ```bash
