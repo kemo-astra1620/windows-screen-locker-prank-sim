@@ -56,7 +56,7 @@ pip install pillow
 python main.py
 ```
 
-🛑 How to Exit
+### 🛑 How to Exit
 
 To abort or close the simulation at any point:
 
