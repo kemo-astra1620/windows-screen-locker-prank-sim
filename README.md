@@ -21,14 +21,6 @@ A lightweight, full-screen hacker-themed desktop simulation script written in Py
 ---🖼️ Optional Image Branding: Automatically scales and overlays a custom image (hacker.png) if Pillow (PIL) is present.
 
 ---🚨 Safe Emergency Exit: Pressing ESC immediately unhooks system hooks and closes the application cleanly without making any system changes.
-    
-### 📁 Repository Structure
-----------------------------------------------------------------------------------
-├── main.py           Main application source code
-├── hacker.png        (Optional) Image overlay file placed in the same folder
-├── requirements.txt  Dependency file
-└── README.md         Project documentation
-----------------------------------------------------------------------------------
 
 ### ⚙️️ How It Works (Technical Overview)
 
