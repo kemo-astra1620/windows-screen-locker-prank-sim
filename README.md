@@ -65,17 +65,18 @@ To abort or close the simulation at any point:
     The script unhooks all keyboard intercepts and terminates safely.
 
 
-⚖️ Legal & Ethical Compliance
+### ⚖️ Legal & Ethical Compliance
 
 This project complies fully with open-source ethical standards and security software regulations:
 
-### 1.No Malicious Capability: The script contains zero payload execution, zero ransomware logic, zero system modifications, and zero persistent hooks. All progress bars and terminal outputs are cosmetic strings.
 
-### 2.Reversible Execution: The application does not write to the disk, modify system startup registers, or disrupt hardware.
+1.No Malicious Capability: The script contains zero payload execution, zero ransomware logic, zero system modifications, and zero persistent hooks. All progress bars and terminal outputs are cosmetic strings.
 
-### 3.Consensual & Controlled Use: Users are required to run this software solely on systems they own or have explicit authorization to test on.
+2.Reversible Execution: The application does not write to the disk, modify system startup registers, or disrupt hardware.
+
+3.Consensual & Controlled Use: Users are required to run this software solely on systems they own or have explicit authorization to test on.
 
 
-📄 License
+### 📄 License
 
 This project is open-source software licensed under the MIT License. Feel free to inspect, modify, and distribute for personal learning or non-malicious fun.
