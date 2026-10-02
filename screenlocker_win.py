@@ -5,6 +5,7 @@ import sys
 import tkinter as tk
 import ctypes
 from ctypes import wintypes
+import keyboard  # Klavye engelleme kütüphanesi
 
 PIL_AVAILABLE = False
 try:
@@ -73,6 +74,21 @@ def uninstall_keyboard_hook():
         user32.UnhookWindowsHookEx(hook_id)
         hook_id = None
 
+# Keyboard kütüphanesi tuş kilitleri
+def block_special_keys():
+    keyboard.block_key('left windows')
+    keyboard.block_key('right windows')
+    keyboard.block_key('alt')
+    keyboard.block_key('ctrl')
+    keyboard.block_key('tab')
+
+def unblock_special_keys():
+    keyboard.unblock_key('left windows')
+    keyboard.unblock_key('right windows')
+    keyboard.unblock_key('alt')
+    keyboard.unblock_key('ctrl')
+    keyboard.unblock_key('tab')
+
 
 class SupremeScreenLocker:
 
@@ -97,6 +113,10 @@ class SupremeScreenLocker:
 
         self.create_widgets()
         self.bind_events()
+
+        # Kilitleri devreye al
+        install_keyboard_hook()
+        block_special_keys()
 
         self.running = True
         self.scan_line_y = 0
@@ -244,234 +264,71 @@ class SupremeScreenLocker:
         self.bar_bg = self.canvas.create_rectangle(
             box_x1 + 200, bar_y, box_x2, bar_y + 16, outline="#00FF33", fill="#111111"
         )
+        
         self.progress_bar_fill = self.canvas.create_rectangle(
-            box_x1 + 200, bar_y, box_x1 + 200, bar_y + 16, fill="#00FF33", outline=""
-        )
-        self.progress_text_id = self.canvas.create_text(
-            (box_x1 + 200 + box_x2) / 2, bar_y + 8, text="%0", fill="black", font=("Courier", 9, "bold")
+            box_x1 + 200, bar_y, box_x1 + 200, bar_y + 16, outline="", fill="#00FF33"
         )
 
-        self.footer_text_id = self.canvas.create_text(
-            self.width / 2,
-            self.height - 25,
-            text="GÜVENLİK DUVARI: %100",
-            fill="white",
-            font=("Courier", 15, "bold"),
-        )
+    def bind_events(self):
+        self.root.bind("<Escape>", self.exit_program)
 
-        self.scanner_line_id = self.canvas.create_line(
-            0, 0, self.width, 0, fill="#002211", width=2
-        )
-
-    def init_subtle_matrix(self):
-        self.matrix_drops = []
-        for _ in range(25):
-            self.matrix_drops.append({
-                "x": random.randint(50, self.width - 50),
-                "y": random.randint(-self.height, 0),
-                "speed": random.randint(3, 8),
-                "text": random.choice("0101010101ABCDEF_ROOT")
-            })
-
-    def animate_hud_scanner(self):
-        if not self.running or self.wipe_mode or self.goodbye_mode:
-            return
-
-        self.scan_line_y += self.scan_direction * 12
-        if self.scan_line_y > self.height or self.scan_line_y < 0:
-            self.scan_direction *= -1
-
-        self.canvas.coords(self.scanner_line_id, 0, self.scan_line_y, self.width, self.scan_line_y)
-
-        for drop in self.matrix_drops:
-            drop["y"] += drop["speed"]
-            if drop["y"] > self.height:
-                drop["y"] = random.randint(-200, -20)
-
-        self.root.after(35, self.animate_hud_scanner)
-
-    def update_breach_timer(self):
-        if not self.running or self.wipe_mode or self.goodbye_mode:
-            return
-        
-        mins = self.timer_seconds // 60
-        secs = self.timer_seconds % 60
-        time_str = f"ELAPSED: {mins:02d}:{secs:02d}"
-        self.canvas.itemconfig(self.timer_text_id, text=time_str)
-        
-        self.timer_seconds += 1
-        self.root.after(1000, self.update_breach_timer)
-
-    def update_progress_bar(self):
-        if not self.running or self.wipe_mode or self.goodbye_mode:
-            return
-
-        if self.progress_percent < 100:
-            step = random.randint(1, 3)
-            self.progress_percent += step
-            if self.progress_percent > 100:
-                self.progress_percent = 100
-
-            box_width = int(self.width * 0.6)
-            box_x1 = (self.width - box_width) / 2
-            box_x2 = box_x1 + box_width
-            bar_start_x = box_x1 + 200
-            
-            current_fill_x = bar_start_x + (box_x2 - bar_start_x) * (self.progress_percent / 100)
-            
-            bar_y = self.canvas.coords(self.bar_bg)[1]
-            self.canvas.coords(self.progress_bar_fill, bar_start_x, bar_y, current_fill_x, bar_y + 16)
-            self.canvas.itemconfig(self.progress_text_id, text=f"%{self.progress_percent}")
-
-            firewall_percent = 100 - self.progress_percent
-            self.canvas.itemconfig(
-                self.footer_text_id,
-                text=f"GÜVENLİK DUVARI: %{firewall_percent}"
-            )
-
-            if self.progress_percent == 100:
-                self.trigger_system_wipe()
-                return
-
-        self.root.after(700, self.update_progress_bar)
-
-    def trigger_system_wipe(self):
-        self.wipe_mode = True
-        
-        self.canvas.configure(bg="#1a0000")
-        self.canvas.delete("all")
-
-        self.canvas.create_text(
-            self.width / 2, 35,
-            text="[ ! ] KRİTİK HATA: TÜM VERİLER SİLİNİYOR [ ! ]",
-            fill="red", font=("Courier", 19, "bold")
-        )
-
-        self.wipe_lines = []
-        start_y = 75
-        end_y = self.height - 40
-        step_y = 26
-
-        for y_pos in range(start_y, end_y, step_y):
-            txt_id = self.canvas.create_text(
-                50, y_pos, text="", fill="#FF3333", font=("Courier", 11, "bold"), anchor="nw"
-            )
-            self.wipe_lines.append(txt_id)
-
-        self.fast_wipe_animation()
-        self.root.after(10000, self.show_goodbye_screen)
-
-    def fast_wipe_animation(self):
-        if not self.running or self.goodbye_mode:
-            return
-
-        wipe_pool = [
-            "rm -rf / --no-preserve-root [OK]",
-            "shred -u -z -n 5 /dev/sda [DELETED]",
-            "Overwriting Master Boot Record (MBR) sectors...",
-            "Purging cryptographic keys and keychains...",
-            "Unlinking user profiles and registry hives...",
-            "Zeroing out physical memory blocks (RAM dump)...",
-            "Terminating kernel threads and active daemons...",
-            "FATAL: Partition table corrupted beyond recovery.",
-            "System self-destruct sequence fully executed."
-        ]
-
-        for i in range(len(self.wipe_lines) - 1):
-            current_text = self.canvas.itemcget(self.wipe_lines[i+1], "text")
-            self.canvas.itemconfig(self.wipe_lines[i], text=current_text)
-
-        new_random_wipe = random.choice(wipe_pool) + " -> " + hex(random.randint(0x10000, 0xFFFFF))
-        self.canvas.itemconfig(self.wipe_lines[-1], text=new_random_wipe)
-
-        self.root.after(60, self.fast_wipe_animation)
-
-    def show_goodbye_screen(self):
-        if not self.running:
-            return
-        
-        self.goodbye_mode = True
-        self.canvas.configure(bg="black")
-        self.canvas.delete("all")
-
-        self.canvas.create_text(
-            self.width / 2, self.height / 2,
-            text="GOODBYE",
-            fill="#FF0033",
-            font=("Courier", 64, "bold"),
-            anchor="center"
-        )
-
-        self.root.after(3000, self.exit_simulation)
-
-    def exit_simulation(self):
+    def exit_program(self, event=None):
         self.running = False
         uninstall_keyboard_hook()
+        unblock_special_keys()
         self.root.destroy()
         sys.exit(0)
 
+    def init_subtle_matrix(self):
+        pass
+
+    def animate_hud_scanner(self):
+        if not self.running: return
+        self.root.after(30, self.animate_hud_scanner)
+
+    def update_breach_timer(self):
+        if not self.running: return
+        self.timer_seconds += 1
+        mins = self.timer_seconds // 60
+        secs = self.timer_seconds % 60
+        self.canvas.itemconfig(self.timer_text_id, text=f"ELAPSED: {mins:02d}:{secs:02d}")
+        self.root.after(1000, self.update_breach_timer)
+
+    def update_progress_bar(self):
+        if not self.running: return
+        if self.progress_percent < 100:
+            self.progress_percent += 1
+            box_width = int(self.width * 0.6)
+            box_x1 = (self.width - box_width) / 2
+            box_x2 = box_x1 + box_width
+            start_x = box_x1 + 200
+            max_w = box_x2 - start_x
+            current_w = start_x + (max_w * (self.progress_percent / 100))
+            bg_coords = self.canvas.coords(self.bar_bg)
+            if bg_coords:
+                self.canvas.coords(self.progress_bar_fill, start_x, bg_coords[1], current_w, bg_coords[3])
+        self.root.after(200, self.update_progress_bar)
     def typewriter_terminal(self):
-        if not self.running or self.wipe_mode or self.goodbye_mode:
-            return
-
-        target_text = self.logs_pool[self.current_log_index]
-
-        if self.char_index <= len(target_text):
-            current_displayed = target_text[:self.char_index] + "_"
-            self.canvas.itemconfig(self.current_line_id, text=current_displayed)
-            self.char_index += 1
-            self.root.after(20, self.typewriter_terminal)
-        else:
-            self.canvas.itemconfig(self.current_line_id, text=target_text)
-            self.displayed_lines.append(self.current_line_id)
-
-            bx1, by1, bx2, by2 = self.console_box_coords
-            
-            if len(self.displayed_lines) > 6:
-                old_id = self.displayed_lines.pop(0)
-                self.canvas.delete(old_id)
-
-            y_offset = by1 + 6
-            for line_id in self.displayed_lines:
-                self.canvas.coords(line_id, bx1, y_offset)
-                y_offset += 18
-
-            self.current_log_index = (self.current_log_index + 1) % len(self.logs_pool)
-            self.char_index = 0
-
-            self.current_line_id = self.canvas.create_text(
-                bx1,
-                y_offset,
-                text="",
-                fill="#00FF66",
-                font=("Courier", 9),
-                anchor="nw"
-            )
-
-            self.root.after(800, self.typewriter_terminal)
-
+        if not self.running: return
+        if self.current_log_index < len(self.logs_pool):
+            current_str = self.logs_pool[self.current_log_index]
+            if self.char_index < len(current_str):
+                self.char_index += 1
+                display_text = "\n".join(self.displayed_lines) + "\n" + current_str[:self.char_index]
+                self.canvas.itemconfig(self.current_line_id, text=display_text)
+                self.root.after(30, self.typewriter_terminal)
+            else:
+                self.displayed_lines.append(current_str)
+                self.current_log_index += 1
+                self.char_index = 0
+                self.root.after(400, self.typewriter_terminal)
     def keep_focus(self):
-        if self.running:
-            self.root.focus_force()
-            self.root.after(500, self.keep_focus)
-
-    def bind_events(self):
-        self.root.protocol("WM_DELETE_WINDOW", lambda: None)
-        self.root.bind("<KeyPress>", self.handle_keypress)
-
-    def handle_keypress(self, event):
-        if event.keysym == "Escape":
-            self.exit_simulation()
-        return "break"
-
-
+        if not self.running: 
+            return
+        self.root.focus_force()
+        self.root.attributes("-topmost", True)
+        self.root.after(10, self.keep_focus)
 if __name__ == "__main__":
-    install_keyboard_hook()
-
     root = tk.Tk()
     app = SupremeScreenLocker(root)
-    
-    try:
-        root.mainloop()
-    finally:
-        uninstall_keyboard_hook()
+    root.mainloop()
